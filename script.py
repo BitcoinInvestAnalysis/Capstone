@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 
+PATH = 'data/'
 
 # Specifing figure layout
 # %matplotlib inline
@@ -74,6 +75,11 @@ def get_stock_daily(symbol, outputsize, datatype):
         "x-rapidapi-key": os.getenv("x-rapidapi-key"),
     }
     return requests.request("GET", url, headers=headers, params=querystring)
+
+
+def write_response_as_csv_file(resp, csv_file):
+    with open(f"{csv_file}", "wb") as csv_file:
+        csv_file.write(resp.content)
 
 
 # defining a utility function for testing the clustering algorithms
