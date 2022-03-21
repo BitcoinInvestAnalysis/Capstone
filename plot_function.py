@@ -12,8 +12,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
+import plotly.graph_objects as go
+from datetime import datetime
 
-PATH = 'data/'
+OHLC = go.Ohlc
+CANDLE = go.Candlestick
 
 # Specifing figure layout
 # %matplotlib inline
@@ -77,11 +80,6 @@ def get_stock_daily(symbol, outputsize, datatype):
     return requests.request("GET", url, headers=headers, params=querystring)
 
 
-def write_response_as_csv_file(resp, csv_file):
-    with open(f"{csv_file}", "wb") as csv_file:
-        csv_file.write(resp.content)
-
-
 # defining a utility function for testing the clustering algorithms
 def plot_clusters(data, algorithm, args, kwds):
     # cluster the data while taking the time the process needs
@@ -102,3 +100,25 @@ def plot_clusters(data, algorithm, args, kwds):
     plt.text(
         -0.5, 0.7, "Clustering took {:.2f} s".format(end_time - start_time), fontsize=14
     )
+
+
+def plot_candlestick(df):
+    fig = go.Figure(
+        data=[
+            go.Candlestick(
+                x=df.timestamp, open=df.open, high=df.high, low=df.low, close=df.close
+            )
+        ]
+    )
+    fig.show()
+
+
+def plot_ohlc(df):
+    fig = go.Figure(
+        data=[
+            go.Ohlc(
+                x=df.timestamp, open=df.open, high=df.high, low=df.low, close=df.close
+            )
+        ]
+    )
+    fig.show()
