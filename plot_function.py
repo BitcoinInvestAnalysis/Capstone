@@ -15,9 +15,6 @@ import time
 import plotly.graph_objects as go
 from datetime import datetime
 
-OHLC = go.Ohlc
-CANDLE = go.Candlestick
-
 # Specifing figure layout
 # %matplotlib inline
 plt.style.use("fivethirtyeight")
