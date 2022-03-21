@@ -12,7 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
-
+import plotly.graph_objects as go
+from datetime import datetime
 
 # Specifing figure layout
 # %matplotlib inline
@@ -96,3 +97,13 @@ def plot_clusters(data, algorithm, args, kwds):
     plt.text(
         -0.5, 0.7, "Clustering took {:.2f} s".format(end_time - start_time), fontsize=14
     )
+
+
+
+def plot_candlestick(df):
+    fig = go.Figure(data=[go.Candlestick(x=df.timestamp,
+                open=df.open,
+                high=df.high,
+                low=df.low,
+                close=df.close)])
+    fig.show()
