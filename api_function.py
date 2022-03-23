@@ -9,6 +9,7 @@ import pandas_datareader as pdr
 from datetime import datetime
 import datetime as dt
 import requests
+import time
 
 
 def get_stock_daily(symbol, outputsize, datatype):
@@ -34,3 +35,21 @@ def get_df_stock_daily(symbol, start_date="2012-01-01", end_date="2021-12-31"):
         end=datetime.strptime(end_date, "%Y-%m-%d").date(),
         api_key=os.getenv("x-rapidapi-key"),
     )
+
+
+def get_all_focused_stocks(start_date="2012-01-01", end_date="2021-12-31"):
+    symbols = ["AAPL", "BTCUSD", "FB", "GOOG", "MSFT", "TSLA"]
+
+    df_aapl = get_df_stock_daily("AAPL", start_date, end_date)
+    time.sleep(15)
+    df_btcusd = get_df_stock_daily("BTCUSD", start_date, end_date)
+    time.sleep(15)
+    df_fb = get_df_stock_daily("FB", start_date, end_date)
+    time.sleep(15)
+    df_goog = get_df_stock_daily("GOOG", start_date, end_date)
+    time.sleep(15)
+    df_msft = get_df_stock_daily("MSFT", start_date, end_date)
+    time.sleep(15)
+    df_tsla = get_df_stock_daily("TSLA", start_date, end_date)
+
+    return df_aapl, df_btcusd, df_fb, df_goog, df_msft, df_tsla
