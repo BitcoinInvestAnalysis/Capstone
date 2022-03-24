@@ -16,7 +16,7 @@ def plot_ohlc(df):
     fig = go.Figure(
         data=[
             go.Ohlc(
-                x=df.timestamp, open=df.open, high=df.high, low=df.low, close=df.close
+                x=df.index, open=df.open, high=df.high, low=df.low, close=df.close
             )
         ]
     )
