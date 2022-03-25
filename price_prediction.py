@@ -80,14 +80,5 @@ plt.title(f"{company} Share Price")
 plt.xlabel("Time")
 plt.ylabel(f"{company} Share Price")
 plt.legend()
-plt.show()
-
-#Predict Next Day
-
-real_data = [model_inputs[len(model_inputs)+1-prediction_days:len(model_inputs+1), 0]]
-real_data = np.array(real_data)
-real_data=np.reshape(real_data, (real_data.shape[0], real_data.shape[1],1))
-
-prediction=model.predict(real_data)
-prediction = scaler.inverse_transform(prediction)
-print(f"Prediction: {prediction}")
+# plt.show()
+plt.savefig('./plot/GOOG-Predicted-Price.png')
