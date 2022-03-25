@@ -23,25 +23,14 @@ def calc_volatility(df, start_date, end_date, trading_day):
 def revenue(df, start, end, invest):
     df.columns = [col.replace(" ", "_").lower() for col in df.columns]
     df.index = pd.to_datetime(df.index)
-    if (
-        invest
-        / (df.loc[df.index == start].open)[
-            df[df.index == start].index.values.astype(int)[0]
+
+    if (invest / (df.open.loc[df.index == start])[0]) <= (
+        df.volume.loc[df.index == start]
+    )[0]:
+        profit = (df.close.loc[df.index == end])[0] / (df.close.loc[df.index == start])[
+            0
         ]
-    ) <= (df.loc[df.index == start].volume)[
-        df[df.index == start].index.values.astype(int)[0]
-    ]:
-        profit = (df.loc[df.index == end].close)[
-            df[df.index == end].index.values.astype(int)[0]
-        ] - (df.loc[df.index == start].open)[
-            df[df.index == start].index.values.astype(int)[0]
-        ]
-        profit *= (
-            invest
-            / (df.loc[df.index == start].open)[
-                df[df.index == start].index.values.astype(int)[0]
-            ]
-        )
+        profit *= invest / (df.open.loc[df.index == start])[0]
         return profit
     else:
         print("That many Stocks are not available")
@@ -50,9 +39,5 @@ def revenue(df, start, end, invest):
 def revenue_ratio(df, start, end):
     df.columns = [col.replace(" ", "_").lower() for col in df.columns]
 
-    profit = (df.loc[df.index == end].close)[
-        df[df.index == end].index.values.astype(int)[0]
-    ] / (df.loc[df.index == start].open)[
-        df[df.index == start].index.values.astype(int)[0]
-    ]
+    profit = (df.close.loc[df.index == end])[0] / (df.close.loc[df.index == start])[0]
     return profit
