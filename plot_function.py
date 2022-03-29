@@ -2,10 +2,11 @@ import plotly.graph_objects as go
 
 
 def plot_candlestick(df):
+    df.columns = [col.replace(" ", "_").lower() for col in df.columns]
     fig = go.Figure(
         data=[
             go.Candlestick(
-                x=df.timestamp, open=df.open, high=df.high, low=df.low, close=df.close
+                x=df.index, open=df.open, high=df.high, low=df.low, close=df.close
             )
         ]
     )
@@ -13,6 +14,7 @@ def plot_candlestick(df):
 
 
 def plot_ohlc(df):
+    df.columns = [col.replace(" ", "_").lower() for col in df.columns]
     fig = go.Figure(
         data=[
             go.Ohlc(
