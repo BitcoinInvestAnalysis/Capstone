@@ -8,17 +8,8 @@ from sklearn.svm import SVR
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM
-import sys
 
 plt.style.use("fivethirtyeight")
-
-
-class DevNull:
-    def write(self, msg):
-        pass
-
-
-sys.stderr = DevNull()
 
 
 def lstm_price_prediction(company, start=dt.date(2012, 1, 1), end=dt.date.today()):
@@ -149,5 +140,7 @@ def svr_price_prediction(company, start=dt.date(2022, 3, 1), end=dt.date.today()
     print("The Polynomial SVR predicted:", poly_svr.predict(day))
     print("The RBF SVR predicted:", rbf_svr.predict(day))
 
+    
     # Show the actual price
-    print("The actual price:", actual_price.Close[str(end)])
+    print("The actual price:", actual_price['Close'][0])
+    
