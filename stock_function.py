@@ -41,3 +41,66 @@ def revenue_ratio(df, start, end):
 
     profit = (df.close.loc[df.index == end])[0] / (df.close.loc[df.index == start])[0]
     return profit
+
+
+def on_balance_volume(df):
+    """Add On-Balance Volume (OBV) and 
+    OBV Exponential Moving Average (EMA) for given dataframe.
+    
+    #     :param df: pandas.DataFrame
+    #     :return: pandas.DataFrame
+    #     """
+
+    OBV = []
+    OBV.append(0)
+
+    #Loop through the data set (close price) from the second row (index 1) to the end of the data set
+    for i in range(1, len(df.Close)):
+        if df.Close[i] > df.Close[i-1]:
+            OBV.append(OBV[-1] + df.Volume[i])
+        elif df.Close[i] < df.Close[i-1]:
+            OBV.append(OBV[-1] - df.Volume[i])
+        else:
+            OBV.append(OBV[-1])
+    
+    #Store the OBV and OBV Exponential Moving Average (EMA) into new columns
+    df['OBV'] = OBV
+    df['OBV_EMA'] = df['OBV'].ewm(span=20).mean()
+    
+    return df
+
+
+def obv_indicator(df, col1, col2):
+    """Add signal when to buy and sell depend on OBV and 
+    OBV Exponential Moving Average (EMA)
+
+    #     :param df: pandas.DataFrame
+    #     :param col1: pandas.Series
+    #     :param col2: pandas.Series
+    #     :return: pandas.DataFrame
+    #     """
+
+    sigPriceBuy, sigPriceSell = [], []
+    flag = -1
+    #Loop through the length of the data set
+    for i in range(0, len(df)):
+        # If OBV > OBV_EMA Then Buy --> col1 => 'OBV' and col2 => 'OBV_EMA'
+        if df[col1][i] > df[col2][i] and flag != 1:
+            sigPriceBuy.append(df['Close'][i])
+            sigPriceSell.append(np.nan)
+            flag = 1
+        # IF OBV < OBV_EMA Then Sell
+        elif df[col1][i] < df[col2][i] and flag != 0:
+            sigPriceSell.append(df['Close'][i])
+            sigPriceBuy.append(np.nan)
+            flag = 0
+        else:
+            sigPriceSell.append(np.nan)
+            sigPriceBuy.append(np.nan)
+
+    df['Buy_Signal_Price'] = sigPriceBuy
+    df['Sell_Signal_Price'] = sigPriceSell      
+    
+    return df
+
+
