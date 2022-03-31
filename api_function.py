@@ -1,12 +1,13 @@
 import pandas_datareader.data as web
+import datetime as dt
 import time
 
 
-def get_df_stock_daily(symbol, start_date="2012-01-01", end_date="2021-12-31"):
+def get_df_stock_daily(symbol, start_date="2015-01-01", end_date=dt.date.today()):
     return web.DataReader(symbol, "yahoo", start=start_date, end=end_date)
 
 
-def get_all_focused_stocks(start_date="2012-01-01", end_date="2021-12-31"):
+def get_all_focused_stocks(start_date="2015-01-01", end_date=dt.date.today()):
     symbols = ["AAPL", "BTC-USD", "FB", "GOOG", "MSFT", "TSLA"]
 
     df_aapl = get_df_stock_daily("AAPL", start_date, end_date)
