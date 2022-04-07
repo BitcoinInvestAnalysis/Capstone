@@ -1,4 +1,6 @@
 import plotly.graph_objects as go
+import plotly.io as pio
+pio.templates.default = 'presentation'
 
 
 def plot_candlestick(df):

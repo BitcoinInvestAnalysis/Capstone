@@ -3,21 +3,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas_datareader.data as web
 import datetime as dt
+from scipy.optimize import brute
 
 plt.style.use("seaborn")
 
 
 class OBVBacktester():
 
-    def __init__(self, symbol, start, end):
+    def __init__(self, symbol, OBV_EMA, start, end):
         self.symbol = symbol
+        self.OBV_EMA = OBV_EMA
         self.start = start
         self.end = end
         self.results = None
         self.get_data()
 
     def __repr__(self):
-        return "OBVBacktester(symbol = {}, start = {}, end = {})".format(self.symbol, self.start, self.end)
+        return "OBVBacktester(symbol = {}, OBV_EMA = {},  start = {}, end = {})".format(self.symbol, self.OBV_EMA, self.start, self.end)
         
     def get_data(self):
         ''' Retrieves and prepares the data.
@@ -48,7 +50,14 @@ class OBVBacktester():
                 OBV.append(OBV[-1])
         
         self.data['OBV'] = OBV
-        self.data['OBV_EMA'] = self.data['OBV'].ewm(span=20).mean()
+        self.data['OBV_EMA'] = self.data['OBV'].ewm(span=self.OBV_EMA).mean()
+        
+    def set_parameters(self, OBV_EMA = None):
+        ''' Updates MA parameters and resp. time series.
+        '''
+        if OBV_EMA is not None:
+            self.OBV_EMA = OBV_EMA
+            self.data['OBV_EMA'] = self.data['OBV'].ewm(span=self.OBV_EMA).mean()
                 
     def test_strategy(self):
         ''' Backtests the trading strategy.
@@ -75,4 +84,16 @@ class OBVBacktester():
         else:
             title = f"{self.symbol} Buy and Hold versus Trading strategy"
             self.results[["creturns", "cstrategy"]].plot(title=title, figsize=(12, 8))
+            
+    def update_and_run(self, OBV_EMA):
+        ''' Updates OBV_EMA parameter and returns the negative absolute performance (for minimization algorithm).
+        '''
+        self.set_parameters(int(OBV_EMA))
+        return self.test_strategy()[0]
+    
+    def optimize_parameters(self, OBV_EMA_range):
+        ''' Finds global maximum given the MA parameter ranges.
+        '''
+        opt = brute(self.update_and_run, (OBV_EMA_range,), finish=None)
+        return opt, -self.update_and_run(opt)
             
