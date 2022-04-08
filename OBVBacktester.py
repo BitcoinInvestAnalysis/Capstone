@@ -2,8 +2,11 @@ import pandas as pd
 import numpy as np
 import plotly.io as pio
 import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import pandas_datareader.data as web
 import datetime as dt
+
 from scipy.optimize import brute
 
 pio.templates.default = 'presentation'
@@ -87,6 +90,33 @@ class OBVBacktester():
             title = f"{self.symbol} Buy and Hold versus Trading strategy with OBV_EMA = {self.OBV_EMA}", 
             labels={"value":"Cumulative Return %"})
             fig.show()
+    
+    def plot_buys_and_sells(self):
+        ''' Plots buy and sell signals
+        '''
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(
+            go.Scatter(x=self.results.index, y=self.results["OBV"], name="OBV"),
+            secondary_y=False,
+        )
+        fig.add_trace(
+            go.Scatter(x=self.results.index, y=self.results["OBV_EMA"], name="OBV_EMA"),
+            secondary_y=False,
+        )
+        fig.add_trace(
+            go.Scatter(x=self.results.index, y=self.results['position'], name="Position"), 
+            secondary_y=True
+        )
+        # Add figure title
+        fig.update_layout(
+            title_text=f"{self.symbol} Buy and Sell Signals"
+        )
+        # Set x-axis title
+        fig.update_xaxes(title_text="Date")
+        # Set y-axes titles
+        fig.update_yaxes(title_text="Number of shares", secondary_y=False)
+        fig.update_yaxes(title_text="Buy and Sell Position", secondary_y=True)
+        fig.show()
             
     def update_and_run(self, OBV_EMA):
         ''' Updates OBV_EMA parameter and returns the negative absolute performance (for minimization algorithm).
