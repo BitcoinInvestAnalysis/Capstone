@@ -128,3 +128,17 @@ def revenue_random(df):
         df.total[day] = (df.close[df.index[-1]] / df.close[day]) * 100
     df = df.set_index('timestamp')
     return df
+
+def manipulate(df):
+    df.columns= df.columns.str.lower()
+    df.columns= df.columns.str.replace(' ', '_')
+    df['ratio'] = 100*(df.close - df.open)/df.open
+    df['absolute'] = df.close - df.open
+    df.index = pd.to_datetime(df.index)
+    df['avg_ratio'] = df.ratio.mean()
+    df = df.reset_index()
+    df = df.rename(columns={'Date':'timestamp'})
+    df = df.set_index('timestamp')
+    df = df.resample("B").mean().dropna()
+
+    return df
