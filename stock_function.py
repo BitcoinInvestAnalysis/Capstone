@@ -104,3 +104,27 @@ def obv_indicator(df, col1, col2):
     return df
 
 
+
+def revenue_random(df):
+    df = df.resample("B").mean().dropna()
+    df = df.reset_index()
+    df['week'] = np.nan
+    df['month'] = np.nan
+    df['quartal'] = np.nan
+    df['halfyear'] = np.nan
+    df['year'] = np.nan
+    df['total'] = np.nan
+    for day in df.index[:-5]:
+        df.week[day] = (df.close[day+5] / df.close[day]) * 100
+    for day in df.index[:-22]:
+        df.month[day] = (df.close[day+22] / df.close[day]) * 100
+    for day in df.index[:-63]:
+        df.quartal[day] = (df.close[day+63] / df.close[day]) * 100
+    for day in df.index[:-126]:
+        df.halfyear[day] = (df.close[day+126] / df.close[day]) * 100   
+    for day in df.index[:-252]:
+        df.year[day] = (df.close[day+252] / df.close[day]) * 100
+    for day in df.index:
+        df.total[day] = (df.close[df.index[-1]] / df.close[day]) * 100
+    df = df.set_index('timestamp')
+    return df
