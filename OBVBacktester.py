@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.io as pio
+import plotly.express as px
 import pandas_datareader.data as web
 import datetime as dt
 from scipy.optimize import brute
 
-plt.style.use("seaborn")
+pio.templates.default = 'presentation'
 
 
 class OBVBacktester():
@@ -82,14 +83,16 @@ class OBVBacktester():
         if self.results is None:
             print("No results to plot yet. Run a strategy.")
         else:
-            title = f"{self.symbol} Buy and Hold versus Trading strategy"
-            self.results[["creturns", "cstrategy"]].plot(title=title, figsize=(12, 8))
+            fig = px.line(self.results, x=self.results.index, y=["creturns", "cstrategy"], 
+            title = f"{self.symbol} Buy and Hold versus Trading strategy with OBV_EMA = {self.OBV_EMA}", 
+            labels={"value":"Cumulative Return %"})
+            fig.show()
             
     def update_and_run(self, OBV_EMA):
         ''' Updates OBV_EMA parameter and returns the negative absolute performance (for minimization algorithm).
         '''
         self.set_parameters(int(OBV_EMA))
-        return self.test_strategy()[0]
+        return -self.test_strategy()[0]
     
     def optimize_parameters(self, OBV_EMA_range):
         ''' Finds global maximum given the MA parameter ranges.
