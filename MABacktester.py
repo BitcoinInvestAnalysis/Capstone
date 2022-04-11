@@ -79,10 +79,32 @@ class MABacktester():
         '''
         if self.results is None:
             print("No results to plot yet. Run a strategy.")
-        else:
-            fig = px.line(self.results, x=self.results.index, y=["creturns", "cstrategy"], 
-            title = f"{self.symbol} Buy and Hold versus Trading strategy with MA_S = {self.MA_S} and MA_L = {self.MA_L}", 
-            labels={"value":"Cumulative Return %"})
+        else:        
+            fig = px.line(self.results, x=self.results.index, y=["cstrategy","creturns"])
+            fig.add_trace(
+                go.Scatter(
+                x=[self.results.index[-1]],
+                y=[self.results["creturns"][-1]],
+                text=[self.results["creturns"][-1]],
+                mode="markers+text",
+                marker=dict(color="red", size=10),
+                textfont=dict(color="green", size=20),
+                textposition="top right",
+                showlegend=False
+            ))
+            fig.add_trace(
+                go.Scatter(
+                x=[self.results.index[-1]],
+                y=[self.results["cstrategy"][-1]],
+                text=[self.results["cstrategy"][-1]],
+                mode="markers+text",
+                marker=dict(color="red", size=10),
+                textfont=dict(color="green", size=20),
+                textposition="top right",
+                showlegend=False
+            ))
+            fig.update_layout(title_text = f"{self.symbol} Buy and Hold versus Trading strategy MA with MA_S = {self.MA_S} and MA_L = {self.MA_L}")
+            fig.update_yaxes(title_text="Cumulative Return %")
             fig.show()
             
     def plot_buys_and_sells(self):
@@ -107,7 +129,7 @@ class MABacktester():
         )
         # Add figure title
         fig.update_layout(
-            title_text=f"{self.symbol} Buy and Sell Signals"
+            title_text=f"{self.symbol} MA Buy and Sell Signals"
         )
         # Set x-axis title
         fig.update_xaxes(title_text="Date")

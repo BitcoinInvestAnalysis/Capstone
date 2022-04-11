@@ -86,9 +86,31 @@ class OBVBacktester():
         if self.results is None:
             print("No results to plot yet. Run a strategy.")
         else:
-            fig = px.line(self.results, x=self.results.index, y=["creturns", "cstrategy"], 
-            title = f"{self.symbol} Buy and Hold versus Trading strategy with OBV_EMA = {self.OBV_EMA}", 
-            labels={"value":"Cumulative Return %"})
+            fig = px.line(self.results, x=self.results.index, y=["cstrategy","creturns"])
+            fig.add_trace(
+                go.Scatter(
+                x=[self.results.index[-1]],
+                y=[self.results["creturns"][-1]],
+                text=[self.results["creturns"][-1]],
+                mode="markers+text",
+                marker=dict(color="red", size=10),
+                textfont=dict(color="green", size=20),
+                textposition="top right",
+                showlegend=False
+            ))
+            fig.add_trace(
+                go.Scatter(
+                x=[self.results.index[-1]],
+                y=[self.results["cstrategy"][-1]],
+                text=[self.results["cstrategy"][-1]],
+                mode="markers+text",
+                marker=dict(color="red", size=10),
+                textfont=dict(color="green", size=20),
+                textposition="top right",
+                showlegend=False
+            ))
+            fig.update_layout(title_text = f"{self.symbol} Buy and Hold versus Trading strategy OBV with OBV_EMA = {self.OBV_EMA}")
+            fig.update_yaxes(title_text="Cumulative Return %")
             fig.show()
     
     def plot_buys_and_sells(self):
@@ -109,7 +131,7 @@ class OBVBacktester():
         )
         # Add figure title
         fig.update_layout(
-            title_text=f"{self.symbol} Buy and Sell Signals"
+            title_text=f"{self.symbol} OBV Buy and Sell Signals"
         )
         # Set x-axis title
         fig.update_xaxes(title_text="Date")
