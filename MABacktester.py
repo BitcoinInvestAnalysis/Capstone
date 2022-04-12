@@ -80,7 +80,21 @@ class MABacktester():
         if self.results is None:
             print("No results to plot yet. Run a strategy.")
         else:        
-            fig = px.line(self.results, x=self.results.index, y=["cstrategy","creturns"])
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=self.results.index,
+                    y=self.results.creturns,
+                    name="Buy & Hold"
+                )
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=self.results.index,
+                    y=self.results.cstrategy,
+                    name="Strategy"
+                )
+            )
             fig.add_trace(
                 go.Scatter(
                 x=[self.results.index[-1]],
@@ -91,6 +105,7 @@ class MABacktester():
                 textfont=dict(color="green", size=20),
                 textposition="top right",
                 showlegend=False
+                
             ))
             fig.add_trace(
                 go.Scatter(
@@ -101,10 +116,11 @@ class MABacktester():
                 marker=dict(color="red", size=10),
                 textfont=dict(color="green", size=20),
                 textposition="top right",
-                showlegend=False
+                showlegend=False                
             ))
-            fig.update_layout(title_text = f"{self.symbol} Buy and Hold versus Trading strategy MA with MA_S = {self.MA_S} and MA_L = {self.MA_L}")
-            fig.update_yaxes(title_text="Cumulative Return %")
+            fig.update_layout(title_text = f"{self.symbol} Buy and Hold versus Trading strategy MA with MA_S = {self.MA_S} and MA_L = {self.MA_L}",
+                              width=1400, height=600)
+            fig.update_yaxes(title_text="Cumulative Returns %")
             fig.show()
             
     def plot_buys_and_sells(self):
@@ -129,7 +145,8 @@ class MABacktester():
         )
         # Add figure title
         fig.update_layout(
-            title_text=f"{self.symbol} MA Buy and Sell Signals"
+            title_text=f"{self.symbol} MA Buy and Sell Signals with MA_S = {self.MA_S} and MA_L = {self.MA_L}",
+            width=1400, height=600
         )
         # Set x-axis title
         fig.update_xaxes(title_text="Date")
