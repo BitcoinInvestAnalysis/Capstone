@@ -122,6 +122,8 @@ class MABacktester():
                               width=1400, height=600)
             fig.update_yaxes(title_text="Cumulative Returns %")
             fig.show()
+            # fig.to_image(format="png", engine="orca")
+            # fig.write_image(f"plot/MA_Results_{self.symbol}_with_MA_S_{self.MA_S}_MA_L_{self.MA_L}.png")
             
     def plot_buys_and_sells(self):
         ''' Plots buy and sell signals
@@ -154,6 +156,8 @@ class MABacktester():
         fig.update_yaxes(title_text="Close Price", secondary_y=False)
         fig.update_yaxes(title_text="Buy and Sell Position", secondary_y=True)
         fig.show()
+        # fig.to_image(format="png", engine="orca")
+        # fig.write_image(f"plot/MA_signals_{self.symbol}_with_MA_S_{self.MA_S}_MA_L_{self.MA_L}.png")
         
     def update_and_run(self, MA):
         ''' Updates MA parameters and returns the negative absolute performance (for minimization algorithm).
