@@ -14,16 +14,16 @@ pio.templates.default = 'presentation'
 
 class OBVBacktester():
 
-    def __init__(self, symbol, OBV_EMA, start, end):
+    def __init__(self, symbol, EMA, start, end):
         self.symbol = symbol
-        self.OBV_EMA = OBV_EMA
+        self.EMA = EMA
         self.start = start
         self.end = end
         self.results = None
         self.get_data()
 
     def __repr__(self):
-        return "OBVBacktester(symbol = {}, OBV_EMA = {},  start = {}, end = {})".format(self.symbol, self.OBV_EMA, self.start, self.end)
+        return "OBVBacktester(symbol = {}, EMA = {},  start = {}, end = {})".format(self.symbol, self.EMA, self.start, self.end)
         
     def get_data(self):
         ''' Retrieves and prepares the data.
@@ -54,20 +54,20 @@ class OBVBacktester():
                 OBV.append(OBV[-1])
         
         self.data['OBV'] = OBV
-        self.data['OBV_EMA'] = self.data['OBV'].ewm(span=self.OBV_EMA).mean()
+        self.data['EMA'] = self.data['OBV'].ewm(span=self.EMA).mean()
         
-    def set_parameters(self, OBV_EMA = None):
+    def set_parameters(self, EMA = None):
         ''' Updates MA parameters and resp. time series.
         '''
-        if OBV_EMA is not None:
-            self.OBV_EMA = OBV_EMA
-            self.data['OBV_EMA'] = self.data['OBV'].ewm(span=self.OBV_EMA).mean()
+        if EMA is not None:
+            self.EMA = EMA
+            self.data['EMA'] = self.data['OBV'].ewm(span=self.EMA).mean()
                 
     def test_strategy(self):
         ''' Backtests the trading strategy.
         '''                
         data = self.data.copy().dropna()
-        data["position"] = np.where(data["OBV"] > data["OBV_EMA"], 1, -1)
+        data["position"] = np.where(data["OBV"] > data["EMA"], 1, -1)
         data["strategy"] = data["position"].shift(1) * data["returns"]
         data.dropna(inplace=True)
         data["creturns"] = data["returns"].cumsum().apply(np.exp)
@@ -123,7 +123,7 @@ class OBVBacktester():
                 textposition="top right",
                 showlegend=False
             ))
-            fig.update_layout(title_text = f"{self.symbol} Buy and Hold versus Trading strategy OBV with OBV_EMA = {self.OBV_EMA}",
+            fig.update_layout(title_text = f"{self.symbol} Buy and Hold versus Trading strategy OBV with EMA = {self.EMA}",
                               width=1400, height=600)
             fig.update_yaxes(title_text="Cumulative Returns %")
             fig.show()
@@ -137,7 +137,7 @@ class OBVBacktester():
             secondary_y=False,
         )
         fig.add_trace(
-            go.Scatter(x=self.results.index, y=self.results["OBV_EMA"], name="OBV_EMA"),
+            go.Scatter(x=self.results.index, y=self.results["EMA"], name="EMA"),
             secondary_y=False,
         )
         fig.add_trace(
@@ -146,7 +146,7 @@ class OBVBacktester():
         )
         # Add figure title
         fig.update_layout(
-            title_text=f"{self.symbol} OBV Buy and Sell Signals with OBV_EMA = {self.OBV_EMA}",
+            title_text=f"{self.symbol} OBV Buy and Sell Signals with EMA = {self.EMA}",
             width=1400, height=600
         )
         # Set x-axis title
@@ -156,15 +156,15 @@ class OBVBacktester():
         fig.update_yaxes(title_text="Buy and Sell Position", secondary_y=True)
         fig.show()
             
-    def update_and_run(self, OBV_EMA):
-        ''' Updates OBV_EMA parameter and returns the negative absolute performance (for minimization algorithm).
+    def update_and_run(self, EMA):
+        ''' Updates EMA parameter and returns the negative absolute performance (for minimization algorithm).
         '''
-        self.set_parameters(int(OBV_EMA))
+        self.set_parameters(int(EMA))
         return -self.test_strategy()[0]
     
-    def optimize_parameters(self, OBV_EMA_range):
+    def optimize_parameters(self, EMA_range):
         ''' Finds global maximum given the MA parameter ranges.
         '''
-        opt = brute(self.update_and_run, (OBV_EMA_range,), finish=None)
+        opt = brute(self.update_and_run, (EMA_range,), finish=None)
         return opt, -self.update_and_run(opt)
             

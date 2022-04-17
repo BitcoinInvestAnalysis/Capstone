@@ -130,7 +130,7 @@ class MABacktester():
         '''
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(
-            go.Scatter(x=self.results.index, y=self.results.Close, name="Close Price", opacity=0.35),
+            go.Scatter(x=self.results.index, y=self.results.Close, name="Closing Price", opacity=0.35),
             secondary_y=False,
         )
         fig.add_trace(
@@ -153,7 +153,7 @@ class MABacktester():
         # Set x-axis title
         fig.update_xaxes(title_text="Date")
         # Set y-axes titles
-        fig.update_yaxes(title_text="Close Price", secondary_y=False)
+        fig.update_yaxes(title_text="Closing Price", secondary_y=False)
         fig.update_yaxes(title_text="Buy and Sell Position", secondary_y=True)
         fig.show()
         # fig.to_image(format="png", engine="orca")
